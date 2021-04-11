@@ -10,5 +10,6 @@ angular.module("SoodaApp", []).controller("SoodaCtrl", function($scope) {
     }
   } else {
     console.info('i am not an iphone');
+    //$scope.showInstall = true;
   }
 });
