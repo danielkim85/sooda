@@ -1,20 +1,25 @@
 body {
-	background-color: #000;
+	background-color: #202020;
 	color: #fff;
 	font-family: 'Amatic SC', cursive;
 	margin: 0;
 }
 
 .main {
-	font-size: 24px;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	width: 100px;
-	height: 50px;
-	margin: -25px 0 0 -50px;
-	line-height: 50px;
+	position: absolute;
 	text-align: center;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.logo {
+	font-size: 24px;
+}
+
+.email, .password, .login {
+	width:250px;
+	margin:10px 0 0 0 !important;
 }
 
 .install {

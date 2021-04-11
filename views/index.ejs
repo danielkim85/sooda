@@ -16,13 +16,32 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
 
+		<link rel="stylesheet" href="stylesheets/semantic.min.css" />
 		<link rel="stylesheet" href="stylesheets/style.css" />
 
 		<script src="javascripts/angular.min.js"></script>
 	</head>
 	<body>
 		<div class="main">
-			sooda.io
+			<div class="logo">
+				sooda.io
+			</div>
+            <div ng-hide="showInstall">
+                <div ng-show="googleAuthed">
+                    <div class="ui input email">
+                        <input type="text" placeholder="Gmail address" />
+                    </div>
+                </div>
+                <div ng-show="googleAuthed">
+                    <div class="ui input password">
+                        <input type="text" placeholder="Password" />
+                    </div>
+                </div>
+                <div>
+                    <button class="ui button login"
+                            ng-click="login();">Login</button>
+                </div>
+            </div>
 		</div>
 		<div class="install"
 				 ng-show="showInstall">
