@@ -1,4 +1,6 @@
-<html lang="en">
+<html lang="en"
+			ng-app="SoodaApp"
+			ng-controller="SoodaCtrl">
 	<head>
 		<title>sooda.io</title>
 		<meta name="viewport" content = "width = device-width, initial-scale = 1.0, minimum-scale = 1, maximum-scale = 1, user-scalable = no" />
@@ -15,10 +17,24 @@
 		<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
 
 		<link rel="stylesheet" href="stylesheets/style.css" />
+
+		<script src="javascripts/angular.min.js"></script>
 	</head>
 	<body>
 		<div class="main">
 			sooda.io
 		</div>
+		<div class="install"
+				 ng-show="showInstall">
+			<div>
+				1. Click the share icon.
+				<br />
+				2. Add to home screen.
+			</div>
+			<div class="down-icon">
+				⇣
+			</div>
+		</div>
+		<script src="javascripts/index.js"></script>
 	</body>
 </html>
