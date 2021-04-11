@@ -1,0 +1,17 @@
+body {
+	background-color: #000;
+	color: #fff;
+	font-family: 'Amatic SC', cursive;
+}
+
+.main {
+	font-size: 24px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 100px;
+	height: 50px;
+	margin: -25px 0 0 -50px;
+	line-height: 50px;
+	text-align: center;
+}
