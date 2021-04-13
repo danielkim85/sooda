@@ -23,25 +23,18 @@
 	</head>
 	<body>
 		<div class="main">
-			<div class="logo">
-				sooda.io
+			<div ng-hide="showMain">
+				<div class="logo">
+					{ sooda.io }
+				</div>
+				<div ng-hide="showInstall || authed">
+					<button class="ui button login"
+									ng-click="login();">Login</button>
+				</div>
 			</div>
-            <div ng-hide="showInstall">
-                <div ng-show="googleAuthed">
-                    <div class="ui input email">
-                        <input type="text" placeholder="Gmail address" />
-                    </div>
-                </div>
-                <div ng-show="googleAuthed">
-                    <div class="ui input password">
-                        <input type="text" placeholder="Password" />
-                    </div>
-                </div>
-                <div>
-                    <button class="ui button login"
-                            ng-click="login();">Login</button>
-                </div>
-            </div>
+			<div class="welcome" ng-show="showMain">
+				{{ welcome }}
+			</div>
 		</div>
 		<div class="install"
 				 ng-show="showInstall">

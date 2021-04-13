@@ -13,13 +13,13 @@ body {
 	transform: translate(-50%, -50%);
 }
 
-.logo {
+.logo, .welcome {
 	font-size: 24px;
 }
 
-.email, .password, .login {
-	width:250px;
-	margin:10px 0 0 0 !important;
+.login {
+	width:100px;
+	margin:20px 0 0 0 !important;
 }
 
 .install {

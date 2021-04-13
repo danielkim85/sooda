@@ -13,6 +13,8 @@
     "express": "~4.16.1",
     "googleapis": "^71.0.0",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1"
+    "imap": "^0.8.19",
+    "morgan": "~1.9.1",
+    "xoauth2": "^1.2.0"
   }
 }
