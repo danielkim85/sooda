@@ -2,3 +2,15 @@ main {
 	font-size: 24px;
 	font-family: 'Nanum Gothic Coding', monospace;
 }
+
+main .seen, main .seen .header  {
+	color:gray !important;
+}
+
+main .refresh {
+	position: absolute;
+	top:0;
+	right:0;
+	cursor:pointer;
+	margin:10px;
+}

@@ -1,10 +1,16 @@
 <div class="ui inverted segment">
 	<div class="ui inverted relaxed divided list">
 		<div class="item" ng-repeat="message in messages">
-			<div class="content">
+			<div class="content" ng-class="{seen : message.attrs.flags.indexOf('\\Seen') >= 0}">
 				<div class="header">{{ message.from.name }}</div>
 				{{ message.subject }}
 			</div>
 		</div>
 	</div>
 </div>
+<span class="material-icons refresh"
+			ng-click="refresh();">
+	refresh
+</span>
+
+

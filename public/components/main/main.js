@@ -18,6 +18,10 @@ angular.module('main', [])
           }
           main(nv);
         });
+
+        $scope.refresh = function() {
+          window.location.href = '/';
+        }
         const main = async function(nv) {
           let response;
           try {
