@@ -15,25 +15,25 @@
 
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 
 		<link rel="stylesheet" href="stylesheets/semantic.min.css" />
 		<link rel="stylesheet" href="stylesheets/style.css" />
+		<link rel="stylesheet" href="components/main/main.css" />
 
 		<script src="javascripts/angular.min.js"></script>
+		<script src="components/main/main.js"></script>
 	</head>
 	<body>
 		<div class="main">
-			<div ng-hide="showMain">
+			<div ng-hide="userToken">
 				<div class="logo">
 					{ sooda.io }
 				</div>
-				<div ng-hide="showInstall || authed">
+				<div ng-hide="showInstall">
 					<button class="ui button login"
 									ng-click="login();">Login</button>
 				</div>
-			</div>
-			<div class="welcome" ng-show="showMain">
-				{{ welcome }}
 			</div>
 		</div>
 		<div class="install"
@@ -47,6 +47,8 @@
 				⇣
 			</div>
 		</div>
+		<main ng-show="userToken"
+					user-token="userToken"></main>
 		<script src="javascripts/index.js"></script>
 	</body>
 </html>

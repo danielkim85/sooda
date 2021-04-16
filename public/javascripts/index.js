@@ -1,4 +1,4 @@
-angular.module("SoodaApp", []).controller("SoodaCtrl", async function($scope, $http) {
+angular.module("SoodaApp", ['main']).controller("SoodaCtrl", async function($scope, $http) {
 
   const redirect_uri = window.location.protocol + '//' + window.location.host;
 
@@ -10,15 +10,7 @@ angular.module("SoodaApp", []).controller("SoodaCtrl", async function($scope, $h
     return $http.get('/auth?redirect_uri=' + redirect_uri);
   };
 
-  /* wrap this in another directive */
-  const getMessages = function(userToken) {
-    const email = userToken.email;
-    const token = userToken.token
-    return $http.get('/messages/?refresh_token=' + token + '&email=' + email);
-  };
-  /* wrap this in another directive */
-
-  if(window.navigator.userAgent.indexOf('iPhone') != -1){
+  if(window.navigator.userAgent.indexOf('iPhone') != -1) {
     console.info('i am an iPhone');
     if(window.navigator.standalone == true){
       console.info('i am a standalone');
@@ -33,19 +25,7 @@ angular.module("SoodaApp", []).controller("SoodaCtrl", async function($scope, $h
 
   const userToken = localStorage.getItem('userToken');
   if(userToken) {
-    $scope.showMain = true;
-    //Do main logic
-    try {
-      const response = await getMessages(JSON.parse(userToken));
-      console.info(response);
-      $scope.welcome = response.data.messages.length + ' messages';
-      $scope.$apply();
-    } catch(err) {
-      console.error(err);
-      localStorage.removeItem("userToken");
-      //TODO move to error page to avoid loop
-      window.location.href = '/?error=' + JSON.stringify(err);
-    }
+    $scope.userToken = JSON.parse(userToken);
   }
 
   const params = new URLSearchParams(location.search);
@@ -57,7 +37,6 @@ angular.module("SoodaApp", []).controller("SoodaCtrl", async function($scope, $h
 
   const code = params.get('code');
   if(code) {
-    $scope.authed = true;
     //get access token
     try {
       const response = await getToken();

@@ -59,14 +59,8 @@ router.get('/', async function(req, res, next) {
   addProcessEvent('uncaughtException',res);
   addProcessEvent('unhandledRejection',res);
 
-  if(!this.token) {
-    this.token = await generateXOAuth2(req.query.refresh_token, req.query.email);
-  }
-
-  if(!this.imap) {
-    this.imap = getIMap(this.token);
-  }
-  const imap = this.imap;
+  const token = await generateXOAuth2(req.query.refresh_token, req.query.email);
+  const imap = getIMap(token);
 
   imap.once('ready', function() {
     let senders = {};
@@ -76,7 +70,7 @@ router.get('/', async function(req, res, next) {
       let messages = [];
 
       const size = req.query.size ? req.query.size : 10; //TODO get this from param
-      const end = box.messages.total; //TODO get this from param
+      const end = box.messages.total;
       const start = ((end-size) < 0 ? 0 : (end-size)) + 1;
 
       const f = imap.seq.fetch( start + ':' + end , {
@@ -93,7 +87,8 @@ router.get('/', async function(req, res, next) {
             buffer += chunk.toString('utf8');
           });
           stream.once('end', function() {
-            console.info(inspect(Imap.parseHeader(buffer)));
+            //console.info(buffer);
+            //console.info(inspect(Imap.parseHeader(buffer)));
             const parsed = Imap.parseHeader(buffer);
             date = new Date(parsed['date']);
             from = parseFrom(parsed.from[0]);
@@ -106,16 +101,18 @@ router.get('/', async function(req, res, next) {
         });
 
         msg.once('end', function() {
+          /* disable for now
           if(senders[from.email]){
             return;
           }
-
+          */
           senders[from.email] = true;
-          messages.push({
+          messages.unshift({
             id:id,
             subject:subject,
             from:from,
-            date:date
+            date:date,
+            attrs:attrs_
           });
         });
       });
@@ -127,7 +124,6 @@ router.get('/', async function(req, res, next) {
       f.once('end', function() {
         imap.end();
         res.json({
-          //'token' : token,
           messages:messages
         });
       });
@@ -135,7 +131,6 @@ router.get('/', async function(req, res, next) {
     });
   });
 
-  //gogogo
   imap.connect();
 });
 

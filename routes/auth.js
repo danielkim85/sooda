@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
 
 /* get refresh token from an auth code */
 router.get('/accessToken', async function(req, res, next) {
-  try {
+  try {4
     const oauth2Client = getOauth2Client(req.query.redirect_uri);
     let {tokens} = await oauth2Client.getToken(req.query.code);
     oauth2Client.setCredentials(tokens);

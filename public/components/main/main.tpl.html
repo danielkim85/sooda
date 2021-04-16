@@ -1,0 +1,10 @@
+<div class="ui inverted segment">
+	<div class="ui inverted relaxed divided list">
+		<div class="item" ng-repeat="message in messages">
+			<div class="content">
+				<div class="header">{{ message.from.name }}</div>
+				{{ message.subject }}
+			</div>
+		</div>
+	</div>
+</div>
