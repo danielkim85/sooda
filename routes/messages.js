@@ -4,6 +4,7 @@ const router = express.Router();
 const Imap = require('imap');
 const inspect = require('util').inspect;
 const xoauth2 = require("xoauth2");
+const simpleParser = require('mailparser').simpleParser;
 
 //helper
 const generateXOAuth2 = async function(refreshToken,email) {
@@ -55,6 +56,57 @@ const addProcessEvent = function(eventName,res) {
 }
 //end of helper
 
+router.get('/:uid/', async function(req, res) {
+  addProcessEvent('uncaughtException',res);
+  addProcessEvent('unhandledRejection',res);
+
+  const token = await generateXOAuth2(req.query.refresh_token, req.query.email);
+  const imap = getIMap(token);
+  imap.once('ready', function() {
+    let senders = {};
+
+    imap.openBox('INBOX', true, function(err,box) {
+      if (err) throw err;
+
+      const options = {
+        bodies: ['']
+      };
+
+      const f = imap.fetch( req.params.uid , options );
+      f.on('message', function(msg, seqno) {
+        var prefix = '(#' + seqno + ') ';
+
+        msg.on('body', function(stream, info) {
+          simpleParser(stream, (err, mail) => {
+            if(err){
+              res.status(400).send(err);
+            }
+            else if(mail.html) {
+              res.send(mail.html);
+            }
+            else {
+              res.send(mail.text);
+            }
+          });
+        });
+
+        msg.once('end', function() {
+          console.log('Finished');
+        });
+      });
+      f.once('error', function(err) {
+        console.log('Fetch error: ' + err);
+        res.status(400).send(err);
+      });
+      f.once('end', function() {
+        imap.end();
+        imap.closeBox();
+      });
+    });
+  });
+  imap.connect();
+});
+
 router.get('/', async function(req, res, next) {
   addProcessEvent('uncaughtException',res);
   addProcessEvent('unhandledRejection',res);
@@ -87,8 +139,6 @@ router.get('/', async function(req, res, next) {
             buffer += chunk.toString('utf8');
           });
           stream.once('end', function() {
-            //console.info(buffer);
-            //console.info(inspect(Imap.parseHeader(buffer)));
             const parsed = Imap.parseHeader(buffer);
             date = new Date(parsed['date']);
             from = parseFrom(parsed.from[0]);
@@ -108,7 +158,6 @@ router.get('/', async function(req, res, next) {
           */
           senders[from.email] = true;
           messages.unshift({
-            id:id,
             subject:subject,
             from:from,
             date:date,
@@ -119,10 +168,12 @@ router.get('/', async function(req, res, next) {
 
       f.once('error', function(err) {
         console.error('Fetch error: ' + err);
+        res.status(400).send(err);
       });
 
       f.once('end', function() {
         imap.end();
+        imap.closeBox();
         res.json({
           messages:messages
         });

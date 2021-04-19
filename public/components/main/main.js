@@ -1,4 +1,4 @@
-angular.module('main', [])
+angular.module('main', ['ngSanitize'])
   .directive('main', function($http,$rootScope){
     return{
       scope:{
@@ -6,7 +6,11 @@ angular.module('main', [])
       },
       templateUrl: 'components/main/main.tpl.html',
       link: async function($scope){
-        const getMessages = function(userToken,size) {
+        let userToken;
+        window.onMyFrameLoad = function() {
+          jQuery('.hourglass_empty_message').hide();
+        }
+        const getMessages = function(size) {
           const email = userToken.email;
           const token = userToken.token
           return $http.get('/messages/?refresh_token=' + token + '&email=' + email + '&size=' + size);
@@ -16,16 +20,32 @@ angular.module('main', [])
           if(!nv) {
             return;
           }
-          main(nv);
+          userToken = nv;
+          main();
         });
 
         $scope.refresh = function() {
           window.location.href = '/';
         }
-        const main = async function(nv) {
+
+        let lastIndex;
+        $scope.loadMessage = async function(index,uid) {
+          jQuery('.hourglass_empty_message').show();
+
+          if(lastIndex !== undefined) {
+            $scope.messages[lastIndex].selected = false;
+          }
+          lastIndex = index;
+          const email = userToken.email;
+          const token = userToken.token;
+          $scope.messages[index].selected = true;
+          $scope.messages[index].url = '/messages/' + uid + '/?refresh_token=' + token + '&email=' + email;
+        }
+
+        const main = async function() {
           let response;
           try {
-            response = await getMessages(nv,20);
+            response = await getMessages(20);
           } catch(err) {
             if(err.data === 'invalid_client') {
               localStorage.removeItem('userToken');
@@ -35,7 +55,6 @@ angular.module('main', [])
           } finally {
             console.info(response.data.messages);
             $scope.messages = response.data.messages;
-            //$scope.welcome = response.data.messages.length + ' messages';
             $scope.$apply();
           }
         };

@@ -1,16 +1,31 @@
-<div class="ui inverted segment">
+<div class="ui inverted segment"
+		 ng-show="messages.length > 0">
 	<div class="ui inverted relaxed divided list">
 		<div class="item" ng-repeat="message in messages">
-			<div class="content" ng-class="{seen : message.attrs.flags.indexOf('\\Seen') >= 0}">
+			<div class="content"
+					 ng-click="loadMessage($index,message.attrs.uid);"
+					 ng-class="{seen : message.attrs.flags.indexOf('\\Seen') >= 0}">
 				<div class="header">{{ message.from.name }}</div>
 				{{ message.subject }}
 			</div>
+			<span class="material-icons hourglass_empty_message"
+						ng-show="message.selected">
+				hourglass_empty
+			</span>
+			<iframe class="iframe-message"
+							onload="onMyFrameLoad(this)"
+							ng-show="message.selected"
+							src="{{ message.url }}"></iframe>
 		</div>
 	</div>
 </div>
+
 <span class="material-icons refresh"
 			ng-click="refresh();">
 	refresh
 </span>
-
+<span class="material-icons hourglass_empty"
+			ng-hide="messages.length > 0">
+	hourglass_empty
+</span>
 
