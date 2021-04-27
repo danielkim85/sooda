@@ -12,10 +12,18 @@
 						ng-show="message.selected">
 				hourglass_empty
 			</span>
-			<iframe class="iframe-message"
-							onload="onMyFrameLoad(this)"
-							ng-show="message.selected"
-							src="{{ message.url }}"></iframe>
+			<div class="iframe-container"
+					 ng-show="message.selected">
+				<div class="action-bar">
+					<span class="material-icons close"
+								ng-click="message.selected = !message.selected">
+						close
+					</span>
+				</div>
+				<iframe class="iframe-message"
+								onload="onMyFrameLoad(this)"
+								src="{{ message.url }}"></iframe>
+			</div>
 		</div>
 	</div>
 </div>

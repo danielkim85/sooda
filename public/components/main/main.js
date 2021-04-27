@@ -7,9 +7,11 @@ angular.module('main', ['ngSanitize'])
       templateUrl: 'components/main/main.tpl.html',
       link: async function($scope){
         let userToken;
+
         window.onMyFrameLoad = function() {
           jQuery('.hourglass_empty_message').hide();
         }
+
         const getMessages = function(size) {
           const email = userToken.email;
           const token = userToken.token
@@ -30,8 +32,9 @@ angular.module('main', ['ngSanitize'])
 
         let lastIndex;
         $scope.loadMessage = async function(index,uid) {
-          jQuery('.hourglass_empty_message').show();
-
+          if(!$scope.messages[index].url) {
+            jQuery('.hourglass_empty_message').show();
+          }
           if(lastIndex !== undefined) {
             $scope.messages[lastIndex].selected = false;
           }

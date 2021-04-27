@@ -81,11 +81,19 @@ router.get('/:uid/', async function(req, res) {
             if(err){
               res.status(400).send(err);
             }
-            else if(mail.html) {
-              res.send(mail.html);
+            else if (req.query.json !== undefined){
+              res.send(mail);
             }
             else {
-              res.send(mail.text);
+              const messageTypes = ['html','textAsHtml','text'];
+              let message;
+              for(const type of messageTypes) {
+                if(mail[type]) {
+                  message = mail[type];
+                  break;
+                }
+              }
+              res.send(message);
             }
           });
         });
