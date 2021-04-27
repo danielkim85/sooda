@@ -3,6 +3,10 @@ main {
 	font-family: 'Nanum Gothic Coding', monospace;
 	height : 100%;
 }
+
+main .main-container {
+	padding: 0 !important;
+}
 main .segment, main .list{
 	height: inherit !important;
 	overflow : auto;
@@ -11,9 +15,11 @@ main .segment, main .list{
 main .list .header {
 	margin-bottom: 10px !important;
 }
+
 main .list .content{
-	margin: 5px 0;
+	margin: 12px;
 }
+
 main .seen, main .seen .header  {
 	color:gray !important;
 }
@@ -22,6 +28,7 @@ main .material-icons {
 	cursor:pointer;
 	margin:10px;
 }
+
 main .refresh {
 	position: absolute;
 	top:0;
@@ -55,10 +62,10 @@ main .iframe-container {
 main .action-bar {
 	height: 45px;
 }
+
 main .iframe-message {
 	width: 100%;
 	height: calc(100% - 45px);
 	border: 0;
-
 	background-color:#fff;
 }
