@@ -31,7 +31,7 @@ angular.module('main', ['ngSanitize'])
         }
 
         let lastIndex;
-        $scope.loadMessage = async function(index,uid) {
+        $scope.getMessage = async function(index,uid) {
           if(!$scope.messages[index].url) {
             jQuery('.hourglass_empty_message').show();
           }
@@ -41,6 +41,7 @@ angular.module('main', ['ngSanitize'])
           lastIndex = index;
           const email = userToken.email;
           const token = userToken.token;
+          $scope.messages[index].isSeen = true;
           $scope.messages[index].selected = true;
           $scope.messages[index].url = '/messages/' + uid + '/?refresh_token=' + token + '&email=' + email;
         }
@@ -56,7 +57,6 @@ angular.module('main', ['ngSanitize'])
             }
             console.error(err);
           } finally {
-            console.info(response.data.messages);
             $scope.messages = response.data.messages;
             $scope.$apply();
           }

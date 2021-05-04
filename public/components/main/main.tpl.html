@@ -3,8 +3,8 @@
 	<div class="ui inverted relaxed divided list">
 		<div class="item" ng-repeat="message in messages">
 			<div class="content"
-					 ng-click="loadMessage($index,message.attrs.uid);"
-					 ng-class="{seen : message.attrs.flags.indexOf('\\Seen') >= 0}">
+					 ng-click="getMessage($index,message.attrs.uid);"
+					 ng-class="{seen : message.isSeen || message.attrs.flags.indexOf('\\Seen') >= 0}">
 				<div class="header">{{ message.from.name }}</div>
 				{{ message.subject }}
 			</div>
