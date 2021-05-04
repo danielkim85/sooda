@@ -52,7 +52,7 @@ main .hourglass_empty_message {
 }
 
 main .iframe-container {
-	width: calc(100% - 14px);
+	width: 100%;
 	height: 100%;
 	position:absolute;
 	background-color:#1b1c1d;

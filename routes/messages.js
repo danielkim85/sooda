@@ -63,18 +63,16 @@ router.get('/:uid/', async function(req, res) {
   const token = await generateXOAuth2(req.query.refresh_token, req.query.email);
   const imap = getIMap(token);
   imap.once('ready', function() {
-    let senders = {};
-
-    imap.openBox('INBOX', true, function(err,box) {
+    imap.openBox('INBOX', false, function(err,box) {
       if (err) throw err;
 
       const options = {
+        markSeen: true,
         bodies: ['']
       };
 
       const f = imap.fetch( req.params.uid , options );
       f.on('message', function(msg, seqno) {
-        var prefix = '(#' + seqno + ') ';
 
         msg.on('body', function(stream, info) {
           simpleParser(stream, (err, mail) => {
