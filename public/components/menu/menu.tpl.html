@@ -1,0 +1,16 @@
+<span class="material-icons show-menu"
+			ng-click="showMenu = !showMenu;">
+	menu
+</span>
+<div class="menu-items"
+		 ng-show="showMenu">
+
+	<div class="ui list">
+		<div class="item"
+				 ng-click="$parent.refresh();">
+			Refresh
+		</div>
+		<div class="item">Pears</div>
+		<div class="item">Oranges</div>
+	</div>
+</div>

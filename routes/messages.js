@@ -47,7 +47,6 @@ const parseFrom = function(from) {
 
 const addProcessEvent = function(eventName,res) {
   process.on(eventName, function(e) {
-    console.warn(e);
     if(res._headerSent){
       return;
     }
@@ -96,12 +95,9 @@ router.get('/:uid/', async function(req, res) {
           });
         });
 
-        msg.once('end', function() {
-          console.log('Finished');
-        });
       });
       f.once('error', function(err) {
-        console.log('Fetch error: ' + err);
+        console.error('Fetch error: ' + err);
         res.status(400).send(err);
       });
       f.once('end', function() {
@@ -127,8 +123,8 @@ router.get('/', async function(req, res, next) {
 
       let messages = [];
 
-      const size = req.query.size ? req.query.size : 10; //TODO get this from param
-      const end = box.messages.total;
+      const size = req.query.size ? req.query.size : 10;
+      const end = req.query.start ? box.messages.total - parseInt(req.query.start) : box.messages.total;
       const start = ((end-size) < 0 ? 0 : (end-size)) + 1;
 
       const f = imap.seq.fetch( start + ':' + end , {
@@ -164,6 +160,7 @@ router.get('/', async function(req, res, next) {
           */
           senders[from.email] = true;
           messages.unshift({
+            id:id,
             subject:subject,
             from:from,
             date:date,
