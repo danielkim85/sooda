@@ -75,6 +75,7 @@ main .iframe-container {
 	height: 100%;
 	position:absolute;
 	background-color:#1b1c1d;
+	z-index: 1;
 	top:0;
 }
 

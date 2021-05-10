@@ -106,7 +106,7 @@ angular.module('main', ['ngSanitize','menu'])
         }
 
         $scope.formatDate = function(date) {
-          return new Date(date).toLocaleString();
+          return new Date(date).toLocaleString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'});
         }
         const main = async function(refresh) {
           if(isLoading) {
