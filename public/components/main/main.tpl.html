@@ -9,6 +9,7 @@
 					 ng-class="{seen : message.isSeen || message.attrs.flags.indexOf('\\Seen') >= 0,
 					 					  last : $last}">
 				<div class="header">{{ message.from.name }}</div>
+				<div class="timestamp">{{ formatDate(message.date) }}</div>
 				{{ message.subject }}
 			</div>
 			<span class="material-icons hourglass_empty_message"

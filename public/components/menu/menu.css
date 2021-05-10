@@ -12,7 +12,22 @@ menu .menu-items {
 	background-color: #fff;
 	color: #000;
 	width: 90%;
+	height: 100%;
 	position: fixed;
 	padding: 20px;
 	right: 0;
+}
+
+menu .menu-items .item .material-icons {
+	margin: 0;
+}
+
+menu .menu-items .item:first-of-type {
+	margin:0;
+	padding:0 !important;
+}
+
+menu .menu-items .item {
+	margin: 10px 0 0 0;
+	padding: 10px 0 0 0 !important;
 }

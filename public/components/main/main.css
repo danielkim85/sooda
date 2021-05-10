@@ -23,6 +23,13 @@ main .list .header {
 	font-size:18px;
 }
 
+main .list .timestamp {
+	font-size:12px;
+	position: relative;
+	top: -26px;
+	float: right;
+}
+
 main .list .content{
 	margin: 12px;
 }

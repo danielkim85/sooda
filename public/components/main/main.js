@@ -105,6 +105,9 @@ angular.module('main', ['ngSanitize','menu'])
           $scope.messages[index].url = '/messages/' + uid + '/?refresh_token=' + token + '&email=' + email;
         }
 
+        $scope.formatDate = function(date) {
+          return new Date(date).toLocaleString();
+        }
         const main = async function(refresh) {
           if(isLoading) {
             return;
