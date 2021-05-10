@@ -1,14 +1,15 @@
 main {
-	font-family: 'Cute Font', cursive;
+	font-family: 'Quicksand', sans-serif;
 	height : 100%;
 }
 
 main .ui.list {
-	font-size: 20px;
+	font-size: 14px;
 }
 
 main .main-container {
-	padding: 0 !important;
+	padding: 10px 0 0 0 !important;
+	margin: 0 !important;
 }
 
 main .segment, main .list{
@@ -17,14 +18,13 @@ main .segment, main .list{
 }
 
 main .list .header {
-	margin-bottom: 5px !important;
+	margin-bottom: 10px !important;
 	font-family: inherit !important;
-	font-size:25px;
+	font-size:18px;
 }
 
 main .list .content{
 	margin: 12px;
-	line-height: 20px !important;
 }
 
 main .seen, main .seen .header  {

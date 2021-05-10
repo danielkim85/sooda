@@ -144,6 +144,9 @@ router.get('/', async function(req, res, next) {
             const parsed = Imap.parseHeader(buffer);
             date = new Date(parsed['date']);
             from = parseFrom(parsed.from[0]);
+            if(from.name) {
+              from.name = from.name.replace(/"/g,'');
+            }
             subject = parsed.subject[0];
           });
         });
