@@ -25,7 +25,7 @@ angular.module('main', ['ngSanitize','menu'])
           if(!topEle) {
             topEle = $('.content[index=0]');
           }
-          isTop = topEle.position().top === 0;
+          isTop = topEle.position().top === 10;
 
         }
 
@@ -50,7 +50,6 @@ angular.module('main', ['ngSanitize','menu'])
           if(!bottomEleHeight) {
             bottomEleHeight = bottomEle.height();
           }
-
           if (isTop && changeY < -100) {
             main(true);
           }
