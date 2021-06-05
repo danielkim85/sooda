@@ -38,6 +38,13 @@ main .seen, main .seen .header  {
 	color:gray !important;
 }
 
+main .counter {
+	color: chartreuse;
+	font-size: 12px;
+	position: relative;
+	top: -2px;
+}
+
 main .material-icons {
 	cursor:pointer;
 	margin:10px;

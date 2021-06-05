@@ -7,59 +7,8 @@ angular.module('main', ['ngSanitize','menu'])
       templateUrl: 'components/main/main.tpl.html',
       link: async function($scope){
         //pull down detection
-        let pStart = {y:0};
-        let pStop = {y:0};
-        let topEle, bottomEle, windowHeight, isTop, bottomEleHeight;
-
-        $(window).resize(function(){
-          windowHeight = undefined;
-        });
-
-        function swipeStart(e) {
-          if (typeof e['targetTouches'] !== "undefined"){
-            let touch = e.targetTouches[0];
-            pStart.y = touch.screenY;
-          } else {
-            pStart.y = e.screenY;
-          }
-          if(!topEle) {
-            topEle = $('.content[index=0]');
-          }
-          isTop = topEle.position().top === 10;
-
-        }
-
-        function swipeEnd(e){
-          if (typeof e['changedTouches'] !== "undefined"){
-            let touch = e.changedTouches[0];
-            pStop.y = touch.screenY;
-          } else {
-            pStop.y = e.screenY;
-          }
-          swipeCheck();
-        }
-
-        function swipeCheck(){
-          let changeY = pStart.y - pStop.y;
-          if(!windowHeight) {
-            windowHeight = $(window).height();
-          }
-          if(!bottomEle) {
-            bottomEle = $('.content.last');
-          }
-          if(!bottomEleHeight) {
-            bottomEleHeight = bottomEle.height();
-          }
-          if (isTop && changeY < -100) {
-            main(true);
-          }
-          else if(bottomEle.offset().top + bottomEle.outerHeight(true) - windowHeight <= bottomEleHeight) {
-            main(false);
-          }
-          isTop = false;
-        }
-        document.addEventListener('touchstart', function(e){ swipeStart(e); }, false);
-        document.addEventListener('touchend', function(e){ swipeEnd(e); }, false);
+        document.addEventListener('touchstart', function(e){ swipeStart($('.content[index=0]'),e); }, false);
+        document.addEventListener('touchend', function(e){ swipeEnd($('.content.last'),main,e); }, false);
         //end of pull down detection
 
         let userToken, isLoading;
@@ -69,9 +18,10 @@ angular.module('main', ['ngSanitize','menu'])
         }
 
         const getMessages = function(start,size) {
+          console.info('fetching messages with size : ' + size);
           const email = userToken.email;
           const token = userToken.token;
-          const url = '/messages/?refresh_token=' + token + '&email=' + email +
+          const url = '/messages/list/seen/?refresh_token=' + token + '&email=' + email +
                       '&size=' + size + '&start=' + start;
           return $http.get(url);
         };
@@ -101,12 +51,35 @@ angular.module('main', ['ngSanitize','menu'])
           const token = userToken.token;
           $scope.messages[index].isSeen = true;
           $scope.messages[index].selected = true;
-          $scope.messages[index].url = '/messages/' + uid + '/?refresh_token=' + token + '&email=' + email;
+          $scope.messages[index].url = '/messages/get/' + uid + '/?refresh_token=' + token + '&email=' + email;
         }
 
         $scope.formatDate = function(date) {
           return new Date(date).toLocaleString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'});
         }
+
+        $scope.parsedMap = {};
+        const parseMessages = function(messages) {
+          return messages;
+          //still testing merging logic
+          let parsedArray = [];
+          for(let message of messages) {
+            const emailSplit = message.from.email ? message.from.email.split('@') : [message.from.name];
+            const domain = emailSplit.length > 1 ? emailSplit[1] : emailSplit[0];
+            message.domain = domain;
+            if(!$scope.parsedMap[domain]) {
+              $scope.parsedMap[domain] = {count : 0};
+              parsedArray.push(message);
+            }
+            const isSeen = message.attrs.flags.length > 0 && message.attrs.flags[0] === '\\Seen';
+            if(!isSeen) {
+              $scope.parsedMap[domain].count++;
+            }
+          }
+          console.info(parsedArray);
+          return parsedArray;
+        };
+
         const main = async function(refresh) {
           if(isLoading) {
             return;
@@ -130,9 +103,10 @@ angular.module('main', ['ngSanitize','menu'])
           } finally {
             isLoading = false;
             topEle = bottomEle = windowHeight = isTop = bottomEleHeight = undefined;
+            console.info('fetched ' + response.data.messages.length);
             console.info(response.data.messages);
             if(!$scope.messages) {
-              $scope.messages = response.data.messages;
+              $scope.messages = parseMessages(response.data.messages);
             }
             else if(refresh) {
               $scope.showLoading = false;
@@ -141,7 +115,7 @@ angular.module('main', ['ngSanitize','menu'])
               }
             }
             else {
-              $scope.messages = $scope.messages.concat(response.data.messages);
+              $scope.messages = $scope.messages.concat(parseMessages(response.data.messages));
             }
 
             $scope.$apply();

@@ -8,7 +8,12 @@
 					 ng-click="getMessage($index,message.attrs.uid);"
 					 ng-class="{seen : message.isSeen || message.attrs.flags.indexOf('\\Seen') >= 0,
 					 					  last : $last}">
-				<div class="header">{{ message.from.name }}</div>
+				<div class="header">
+					{{ message.from.name ? message.from.name : message.from.email }}
+					<span class="counter">
+						{{ parsedMap[message.domain].count ? '( +' + parsedMap[message.domain].count + ' )' : ''}}
+					</span>
+				</div>
 				<div class="timestamp">{{ formatDate(message.date) }}</div>
 				{{ message.subject }}
 			</div>
