@@ -30,7 +30,8 @@
 					</span>
 				</div>
 				<iframe class="iframe-message"
-								onload="onMyFrameLoad(this)"
+								uid="{{ message.id }}"
+								onload="onMyFrameLoad($(this))"
 								src="{{ message.url }}"></iframe>
 			</div>
 		</div>

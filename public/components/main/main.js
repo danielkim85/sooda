@@ -12,9 +12,25 @@ angular.module('main', ['ngSanitize','menu'])
         //end of pull down detection
 
         let userToken, isLoading;
-        //loading icon trick for iframe content
-        window.onMyFrameLoad = function() {
+
+        //ifarme load event
+        window.onMyFrameLoad = function(iframe) {
+          if(!iframe.attr('src')) {
+            return;
+          }
           $('.hourglass_empty_message').hide();
+          const uid = iframe.attr('uid');
+          const iframeWidth = $('iframe[uid=' + uid + ']')[0].contentWindow.document.body.scrollWidth;
+          const originalWidth = iframe.width();
+          const originalHeight = iframe.height();
+          const zoomRatio = originalWidth / iframeWidth;
+          if(zoomRatio >= 1) {
+            return;
+          }
+          iframe.css('transform-origin','0 0');
+          iframe.css('transform','scale(' + zoomRatio + ')');
+          iframe.css('width',originalWidth * (1+zoomRatio));
+          iframe.css('height',originalHeight * (1+zoomRatio));
         }
 
         const getMessages = function(start,size) {
