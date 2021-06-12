@@ -28,10 +28,7 @@ angular.module('main', ['ngSanitize','menu'])
           if(zoomRatio >= 1) {
             return;
           }
-          console.info(originalWidth);
-          console.info(iframeWidth);
-          console.info(zoomRatio);
-          console.info('adjust zoom ratio');
+
           iframe.css('transform-origin','0 0');
           iframe.css('transform','scale(' + zoomRatio + ')');
           iframe.css('width',originalWidth / zoomRatio);
