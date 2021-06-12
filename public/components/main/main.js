@@ -18,6 +18,7 @@ angular.module('main', ['ngSanitize','menu'])
           if(!iframe.attr('src')) {
             return;
           }
+
           $('.hourglass_empty_message').hide();
           const uid = iframe.attr('uid');
           const iframeWidth = $('iframe[uid=' + uid + ']')[0].contentWindow.document.body.scrollWidth;
@@ -27,10 +28,14 @@ angular.module('main', ['ngSanitize','menu'])
           if(zoomRatio >= 1) {
             return;
           }
+          console.info(originalWidth);
+          console.info(iframeWidth);
+          console.info(zoomRatio);
+          console.info('adjust zoom ratio');
           iframe.css('transform-origin','0 0');
           iframe.css('transform','scale(' + zoomRatio + ')');
-          iframe.css('width',originalWidth * (1+zoomRatio));
-          iframe.css('height',originalHeight * (1+zoomRatio));
+          iframe.css('width',originalWidth / zoomRatio);
+          iframe.css('height',originalHeight / zoomRatio);
         }
 
         const getMessages = function(start,size) {
