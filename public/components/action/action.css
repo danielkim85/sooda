@@ -3,3 +3,7 @@ action {
 	height:45PX;
 	top:0;
 }
+
+action .show-unread.active {
+	color: cyan;
+}

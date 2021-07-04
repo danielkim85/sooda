@@ -10,6 +10,10 @@ angular.module('action', [])
           $scope.$parent.messages[index].selected = !$scope.$parent.messages[index].selected;
           $scope.selectedIndex = undefined;
         }
+
+        $scope.showUnread = function() {
+          $scope.$parent.showUnread = !$scope.$parent.showUnread;
+        }
 /*
         $scope.$watch('selectedIndex', function(value){
 

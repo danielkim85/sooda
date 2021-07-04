@@ -108,7 +108,10 @@ angular.module('main', ['ngSanitize','menu','action'])
         };
 
         const checkNew = async function() {
+          $scope.isLoading = true;
           const response = await getMessages($scope.messages[0].id+1,-1);
+          $scope.isLoading = false;
+          $scope.$apply();
           if(response.data.messages.length === 0) {
             return;
           }

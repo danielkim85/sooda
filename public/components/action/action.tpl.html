@@ -4,4 +4,9 @@
 				ng-click="close(selectedIndex);">
 		close
 	</span>
+	<span class="material-icons show-unread"
+				ng-class="{'active' : $parent.showUnread}"
+				ng-click="showUnread();">
+		filter_alt
+	</span>
 </div>
