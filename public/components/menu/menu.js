@@ -5,7 +5,9 @@ angular.module('menu', [])
       },
       templateUrl: 'components/menu/menu.tpl.html',
       link: function($scope){
-
+        $scope.refresh = function() {
+          $scope.$parent.reset();
+        }
       }
     };
   });

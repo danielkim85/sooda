@@ -1,3 +1,13 @@
+//suppress console
+if(window.location.host !== 'localhost:3000') {
+  let console = {};
+  const methods = ['info','log','warn','error'];
+  for(const method of methods) {
+    console[method] = function() {};
+  }
+  window.console = console;
+}
+
 angular.module("SoodaApp", ['main']).controller("SoodaCtrl", async function($scope, $http) {
 
   const redirect_uri = window.location.protocol + '//' + window.location.host;
@@ -11,15 +21,15 @@ angular.module("SoodaApp", ['main']).controller("SoodaCtrl", async function($sco
   };
 
   if(window.navigator.userAgent.indexOf('iPhone') != -1) {
-    console.info('i am an iPhone');
+    //console.info('i am an iPhone');
     if(window.navigator.standalone == true){
-      console.info('i am a standalone');
+      //console.info('i am a standalone');
     } else {
-      console.info('i am not a standalone');
+      //console.info('i am not a standalone');
       $scope.showInstall = true;
     }
   } else {
-    console.info('i am not an iphone');
+    //console.info('i am not an iphone');
     //$scope.showInstall = true;
   }
 

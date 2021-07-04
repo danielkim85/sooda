@@ -1,4 +1,4 @@
-angular.module('main', ['ngSanitize','menu'])
+angular.module('main', ['ngSanitize','menu','action'])
   .directive('main', function($http,$rootScope){
     return{
       scope:{
@@ -7,8 +7,11 @@ angular.module('main', ['ngSanitize','menu'])
       templateUrl: 'components/main/main.tpl.html',
       link: async function($scope){
         //pull down detection
-        document.addEventListener('touchstart', function(e){ swipeStart($('.content[index=0]'),e); }, false);
-        document.addEventListener('touchend', function(e){ swipeEnd($('.content.last'),main,e); }, false);
+        document.addEventListener('touchstart', function(e) { swipeStart($('.content[index=0]'),e); }, false);
+        document.addEventListener('touchend', function(e) {
+            swipeEnd($('.content.last'), $('action'), main, e);
+          }, false
+        );
         //end of pull down detection
 
         let userToken, isLoading;
@@ -35,12 +38,12 @@ angular.module('main', ['ngSanitize','menu'])
           iframe.css('height',originalHeight / zoomRatio);
         }
 
-        const getMessages = function(start,size) {
-          console.info('fetching messages with size : ' + size);
+        const getMessages = function(start,end) {
+          console.info('fetching messages ' + start + ' ' + end);
           const email = userToken.email;
           const token = userToken.token;
           const url = '/messages/list/seen/?refresh_token=' + token + '&email=' + email +
-                      '&size=' + size + '&start=' + start;
+                      '&start=' + start + '&end=' + end;
           return $http.get(url);
         };
 
@@ -52,15 +55,18 @@ angular.module('main', ['ngSanitize','menu'])
           main();
         });
 
+        $scope.reset = function() {
+          localStorage.removeItem('messages');
+          window.location.href = '/';
+        }
+
         $scope.refresh = function() {
           window.location.href = '/';
         }
 
         let lastIndex;
         $scope.getMessage = async function(index,uid) {
-          if(!$scope.messages[index].url) {
-            jQuery('.hourglass_empty_message').show();
-          }
+          $scope.selectedIndex = index;
           if(lastIndex !== undefined) {
             $scope.messages[lastIndex].selected = false;
           }
@@ -79,7 +85,9 @@ angular.module('main', ['ngSanitize','menu'])
         $scope.parsedMap = {};
         const parseMessages = function(messages) {
           return messages;
+
           //still testing merging logic
+          /*
           let parsedArray = [];
           for(let message of messages) {
             const emailSplit = message.from.email ? message.from.email.split('@') : [message.from.name];
@@ -96,22 +104,53 @@ angular.module('main', ['ngSanitize','menu'])
           }
           console.info(parsedArray);
           return parsedArray;
+          */
         };
 
-        const main = async function(refresh) {
-          if(isLoading) {
+        const checkNew = async function() {
+          const response = await getMessages($scope.messages[0].id+1,-1);
+          if(response.data.messages.length === 0) {
             return;
           }
+          if(response.data.reset) {
+            $scope.reset();
+          }
+          $scope.messages = parseMessages(response.data.messages).concat($scope.messages);
+          $scope.$apply();
+          localStorage.setItem('messages', JSON.stringify($scope.messages));
+        };
+
+        let messages;
+        const main = async function(refresh) {
+          if($scope.isLoading) {
+            return;
+          }
+
+          if(refresh && await checkNew()) {
+            return;
+          }
+
+          //try getting from local storage during first time execution
+          if(messages === undefined) {
+            messages = JSON.parse(localStorage.getItem('messages'));
+          }
+
+          //found something in cache
+          //refresh !== false means this is bottom refresh
+          if(messages !== null && refresh !== false) {
+            console.info(messages);
+            $scope.messages = messages;
+            await checkNew();
+            return;
+          }
+
+          $scope.isLoading = true;
+          //nothing in local storage, try getting it from service
           let response;
           try {
-            isLoading = true;
-            if(refresh) {
-              $scope.showLoading = true;
-              response = await getMessages(0,1);
-            }
-            else {
-              response = await getMessages($scope.messages ? $scope.messages.length : 0, 20);
-            }
+            const end = refresh === false ? $scope.messages[$scope.messages.length-1].id-1 : -1;
+            const start = end === -1 ? -1 : end - 20;
+            response = await getMessages(start,end);
           } catch(err) {
             if(err.data === 'invalid_client') {
               localStorage.removeItem('userToken');
@@ -119,25 +158,22 @@ angular.module('main', ['ngSanitize','menu'])
             }
             console.error(err);
           } finally {
-            isLoading = false;
-            topEle = bottomEle = windowHeight = isTop = bottomEleHeight = undefined;
             console.info('fetched ' + response.data.messages.length);
             console.info(response.data.messages);
-            if(!$scope.messages) {
+            if(refresh !== false) {
               $scope.messages = parseMessages(response.data.messages);
             }
-            else if(refresh) {
-              $scope.showLoading = false;
-              if(response.data.messages[0].id > $scope.messages[0].id) {
-                $scope.refresh();
-              }
-            }
             else {
-              $scope.messages = $scope.messages.concat(parseMessages(response.data.messages));
+              $scope.messages.push(...parseMessages(response.data.messages));
             }
 
-            $scope.$apply();
+            localStorage.setItem('messages', JSON.stringify($scope.messages));
           }
+
+          //final cleanup
+          $scope.isLoading = false;
+          $scope.$apply();
+          topEle = bottomEle = windowHeight = isTop = bottomEleHeight = undefined;
         };
       }
     };

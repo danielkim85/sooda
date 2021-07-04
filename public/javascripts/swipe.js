@@ -16,21 +16,20 @@ function swipeStart(topEle_,e) {
   if(!topEle) {
     topEle = topEle_;
   }
-  isTop = topEle.position().top === 10;
-
+  isTop = topEle.position().top === 0;
 }
 
-function swipeEnd(bottomEle_,callback,e){
+function swipeEnd(bottomEle_,topOffset,callback,e){
   if (typeof e['changedTouches'] !== "undefined"){
     let touch = e.changedTouches[0];
     pStop.y = touch.screenY;
   } else {
     pStop.y = e.screenY;
   }
-  swipeCheck(bottomEle_,callback);
+  swipeCheck(bottomEle_,topOffset,callback);
 }
 
-function swipeCheck(bottomEle_,callback){
+function swipeCheck(bottomEle_,topOffset,callback){
   let changeY = pStart.y - pStop.y;
   if(!windowHeight) {
     windowHeight = $(window).height();
@@ -41,10 +40,11 @@ function swipeCheck(bottomEle_,callback){
   if(!bottomEleHeight) {
     bottomEleHeight = bottomEle.height();
   }
+
   if (isTop && changeY < -100) {
     callback(true);
   }
-  else if(bottomEle.offset().top + bottomEle.outerHeight(true) - windowHeight <= bottomEleHeight) {
+  else if(bottomEle.offset().top - topOffset.height() + bottomEle.outerHeight(true) - windowHeight <= bottomEleHeight) {
     callback(false);
   }
   isTop = false;

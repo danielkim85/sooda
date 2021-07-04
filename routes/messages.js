@@ -158,6 +158,8 @@ router.get('/list/:unseen/', async function(req, res, next) {
   addProcessEvent('uncaughtException',res);
   addProcessEvent('unhandledRejection',res);
 
+  const DEFAULT_SIZE = 20;
+  const MAX_SIZE = 200;
   const token = await generateXOAuth2(req.query.refresh_token, req.query.email);
   const imap = getIMap(token);
 
@@ -177,9 +179,29 @@ router.get('/list/:unseen/', async function(req, res, next) {
         if (req.params.unseen === 'unseen') {
           f = imap.fetch(results, options);
         } else {
-          const size = req.query.size ? req.query.size : 10;
-          const end = req.query.start ? box.messages.total - parseInt(req.query.start) : box.messages.total;
-          const start = ((end - size) < 0 ? 0 : (end - size)) + 1;
+          //const size = req.query.size ? req.query.size : 10;
+          //const end = req.query.start ? box.messages.total - parseInt(req.query.start) : box.messages.total;
+          //const start = ((end - size) < 0 ? 0 : (end - size)) + 1;
+          console.info(req.query.start);
+          console.info(req.query.end);
+          console.info(box.messages.total);
+          const start = parseInt(req.query.start === '-1' ? box.messages.total - DEFAULT_SIZE : req.query.start);
+          const end = parseInt(req.query.end === '-1' ? box.messages.total : req.query.end);
+          console.info (start + '->' + end);
+          if(start > end) {
+            imap.end();
+            imap.closeBox();
+            res.json({
+              messages: []
+            });
+          }
+          if(end - start > MAX_SIZE) {
+            imap.end();
+            imap.closeBox();
+            res.json({
+              reset : true
+            });
+          }
           f = imap.seq.fetch(start + ':' + end, options);
         }
 
