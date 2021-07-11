@@ -74,8 +74,9 @@ angular.module('main', ['ngSanitize','menu','action'])
           const email = userToken.email;
           const token = userToken.token;
           $scope.messages[index].isSeen = true;
-          $scope.messages[index].selected = true;
           $scope.messages[index].url = '/messages/get/' + uid + '/?refresh_token=' + token + '&email=' + email;
+          saveCache();
+          $scope.messages[index].selected = true;
         }
 
         $scope.formatDate = function(date) {
@@ -107,20 +108,26 @@ angular.module('main', ['ngSanitize','menu','action'])
           */
         };
 
+        const MAX_CACHE_SIZE = 200;
+        const saveCache = function() {
+          messages = $scope.messages.slice(0,MAX_CACHE_SIZE);
+          localStorage.setItem('messages', JSON.stringify(messages));
+        };
         const checkNew = async function() {
           $scope.isLoading = true;
           const response = await getMessages($scope.messages[0].id+1,-1);
           $scope.isLoading = false;
           $scope.$apply();
           if(response.data.messages.length === 0) {
-            return;
+            return true;
           }
           if(response.data.reset) {
             $scope.reset();
           }
           $scope.messages = parseMessages(response.data.messages).concat($scope.messages);
           $scope.$apply();
-          localStorage.setItem('messages', JSON.stringify($scope.messages));
+          saveCache()
+          return true;
         };
 
         let messages;
@@ -132,7 +139,6 @@ angular.module('main', ['ngSanitize','menu','action'])
           if(refresh && await checkNew()) {
             return;
           }
-
           //try getting from local storage during first time execution
           if(messages === undefined) {
             messages = JSON.parse(localStorage.getItem('messages'));
@@ -169,8 +175,7 @@ angular.module('main', ['ngSanitize','menu','action'])
             else {
               $scope.messages.push(...parseMessages(response.data.messages));
             }
-
-            localStorage.setItem('messages', JSON.stringify($scope.messages));
+            saveCache();
           }
 
           //final cleanup

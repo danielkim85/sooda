@@ -5,6 +5,7 @@
 		close
 	</span>
 	<span class="material-icons show-unread"
+				ng-show="selectedIndex === undefined"
 				ng-class="{'active' : $parent.showUnread}"
 				ng-click="showUnread();">
 		filter_alt

@@ -5,7 +5,7 @@
 	<div class="ui inverted relaxed divided list">
 		<div class="item"
 				 ng-repeat="message in messages track by $index"
-				 ng-if="!showUnread || (message.attrs.flags.indexOf('\\Seen') === -1)">
+				 ng-if="!showUnread || (!message.isSeen && message.attrs.flags.indexOf('\\Seen') === -1)">
 			<div class="content"
 					 index="{{$index}}"
 					 ng-click="getMessage($index,message.attrs.uid);"
